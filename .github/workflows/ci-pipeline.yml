@@ -1,28 +1,22 @@
-name: CI Pipeline
+name: CI Pipeline Windows
 
-on:  
+on:
   push:
-    branches:  
+    branches:
       - main
   pull_request:
     branches:
       - main
 
-jobs:  
-  build:    
-    runs-on: ubuntu-latest    
+build:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v2
+     - name: Checkout repo
+       uses: actions/checkout@v2
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@latest
-        with:
-          node-version: '18'
+     - name: Install dependencies
+       run: npm install
 
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Rodar testes
-        run: npm test
+     - name: Build application
+       run: npm run build
