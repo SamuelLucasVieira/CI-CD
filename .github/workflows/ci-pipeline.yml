@@ -7,16 +7,34 @@ on:
   pull_request:
     branches:
       - main
-jobs: 
+
+jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-     - name: Checkout repo
-       uses: actions/checkout@v2
+      - name: Checkout do código
+        uses: actions/checkout@v2
 
-     - name: Install dependencies
-       run: npm install
+      - name: Baixar e Instalar Node.js v20.17.0 Manualmente
+        run: |
+          Invoke-WebRequest -Uri "https://nodejs.org/dist/v20.17.0/node-v20.17.0-x64.msi" -OutFile "node.msi"
+          Start-Process "node.msi" -ArgumentList "/quiet" -NoNewWindow -Wait
+          echo "Verificando instalação do Node.js"
+          if (-Not (Test-Path "C:\Program Files\nodejs\node.exe")) { exit 1 }
 
-     - name: Build application
-       run: npm run build
+      - name: Adicionar Node.js ao PATH
+        run: |
+          echo "C:\Program Files\nodejs" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+      - name: Verificar a instalação do Node.js
+        run: node -v
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Instalar Jest manualmente
+        run: npm install --save-dev jest
+
+      - name: Rodar testes com Jest
+        run: npx jest
