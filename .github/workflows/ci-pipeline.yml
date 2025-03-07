@@ -16,16 +16,10 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v2
 
-      - name: Baixar e Instalar Node.js v20.17.0 Manualmente
-        run: |
-          Invoke-WebRequest -Uri "https://nodejs.org/dist/v20.17.0/node-v20.17.0-x64.msi" -OutFile "node.msi"
-          Start-Process "node.msi" -ArgumentList "/quiet" -NoNewWindow -Wait
-          echo "Verificando instalação do Node.js"
-          if (-Not (Test-Path "C:\Program Files\nodejs\node.exe")) { exit 1 }
-
-      - name: Adicionar Node.js ao PATH
-        run: |
-          echo "C:\Program Files\nodejs" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+      - name: Configurar Node.js v20.17.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.17.0'
 
       - name: Verificar a instalação do Node.js
         run: node -v
@@ -33,8 +27,5 @@ jobs:
       - name: Instalar dependências
         run: npm install
 
-      - name: Instalar Jest manualmente
-        run: npm install --save-dev jest
-
-      - name: Rodar testes com Jest
+      - name: Rodar testes
         run: npx jest
